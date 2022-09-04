@@ -1,7 +1,7 @@
-REM Requires ILMerge from http://www.microsoft.com/download/en/confirmation.aspx?id=17630
-REM makes fnr2.exe that includes fnr.exe and both assemblies. Can be renamed to fnr.exe
+REM Requires ILRepack https://github.com/gluck/il-repack (https://www.nuget.org/packages/ILRepack/)
+REM Makes fnr.exe, with all assemblies from the output folder merged into it.
 
-set RELEASE_DIR=C:\Users\Jonathan\Desktop\Z\GitHub\findandreplace\src\FindAndReplace.App\bin\Release
+set RELEASE_DIR=.\FindAndReplace.App\bin\Release\net461\
 
 cd %RELEASE_DIR%
-"C:\Program Files (x86)\Microsoft\ILMerge\ilmerge.exe" /log:log.txt /targetplatform:4 /out:fnr2.exe fnr.exe FindAndReplace.dll CommandLine.dll EncodingTools.dll
+%NUGET_PACKAGES%\ilrepack\2.0.18\tools\ILRepack.exe /log:log.txt /targetplatform:v4 /log:log.txt /targetplatform:v4 /out:fnr.exe FindAndReplace.App.exe FindAndReplace.dll EncodingTools.dll CommandLine.dll

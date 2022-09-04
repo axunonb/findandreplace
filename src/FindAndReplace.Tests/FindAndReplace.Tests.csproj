@@ -1,107 +1,34 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\NUnit.3.13.3\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.13.3\build\NUnit.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2517D7CF-7BBD-4CEA-AA10-87FFB6C6A0DC}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FindAndReplace.Tests</RootNamespace>
-    <AssemblyName>FindAndReplace.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>net461</TargetFramework>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <AssemblyTitle>FindAndReplace.Tests</AssemblyTitle>
+    <Product>FindAndReplace.Tests</Product>
+    <Copyright>Copyright ©  2011</Copyright>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <PostBuildEvent />
+    <AssemblyTitle>FindAndReplace.Tests</AssemblyTitle>
+    <Product>FindAndReplace.Tests</Product>
+    <Copyright>Copyright ©  2011</Copyright>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PostBuildEvent />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>portable</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="CommandLine, Version=1.9.71.2, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework, Version=3.13.3.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="pnunit.framework">
-      <HintPath>..\..\lib\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CommandLineLearningTests.cs" />
-    <Compile Include="CommandLineUtilsTest.cs" />
-    <Compile Include="DetectEncodingAccuracyTest.cs" />
-    <Compile Include="DetectEncodingSpeedTest.cs" />
-    <Compile Include="FileGetterTest.cs" />
-    <Compile Include="FinderTest.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegexLearningTest.cs" />
-    <Compile Include="ReplacerTest.cs" />
-    <Compile Include="FinderSpeedTest.cs" />
-    <Compile Include="TestBase.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\EncodingTools\EncodingTools.csproj">
-      <Project>{CA19D4DE-B232-491A-92BF-7BF3A2758694}</Project>
-      <Name>EncodingTools</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FindAndReplace.Tests.CommandLine\FindAndReplace.Tests.CommandLine.csproj">
-      <Project>{72b4c6bb-e2c8-4162-ae69-23b588048689}</Project>
-      <Name>FindAndReplace.Tests.CommandLine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FindAndReplace\FindAndReplace.csproj">
-      <Project>{4E35E2C7-099B-4356-9215-0DC77D156CFA}</Project>
-      <Name>FindAndReplace</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\NUnit.3.13.3\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.13.3\build\NUnit.props'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="1.9.71" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EncodingTools\EncodingTools.csproj" />
+    <ProjectReference Include="..\FindAndReplace.Tests.CommandLine\FindAndReplace.Tests.CommandLine.csproj" />
+    <ProjectReference Include="..\FindAndReplace\FindAndReplace.csproj" />
+  </ItemGroup>
 </Project>

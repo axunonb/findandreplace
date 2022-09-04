@@ -97,7 +97,7 @@ free program...";
 		[Test]
 		public void In_Real_Directory()
 		{
-			string realDir = "..//..//bin";
+			string realDir = "..//";
 			 
 			StopWatch stopWatch = new StopWatch();
 			stopWatch.Start();

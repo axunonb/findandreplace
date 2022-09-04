@@ -46,12 +46,12 @@ namespace FindAndReplace.App
 
 				if (args.Contains("--consoleByProcessId"))
 				{
-					//Get a parent procss for see where send the output.
+					//Get a parent process for see where send the output.
 					process = Process.GetProcessById(Process.GetCurrentProcess().Id).Parent();
 				}
 				else
 				{
-					//Get a pointer to the forground window.  The idea here is that
+					//Get a pointer to the foreground window.  The idea here is that
 					//IF the user is starting our application from an existing console
 					//shell, that shell will be the uppermost window.  We'll get it
 					//and attach to it
