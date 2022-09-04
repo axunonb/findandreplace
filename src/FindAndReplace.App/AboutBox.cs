@@ -107,17 +107,17 @@ namespace FindAndReplace.App
 
 		private void lnkProduct_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Process.Start("http://findandreplace.io/");
+			Tools.LaunchBrowser("http://findandreplace.io/");
 		}
 
 		private void lnkCompany_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Process.Start("http://www.entechsolutions.com");
+            Tools.LaunchBrowser("http://www.entechsolutions.com");
 		}
 
         private void uiSupportedBy_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://www.zzzprojects.com/");
+            Tools.LaunchBrowser("http://www.zzzprojects.com/");
         }
     }
 }

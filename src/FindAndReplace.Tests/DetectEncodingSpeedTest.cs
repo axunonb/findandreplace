@@ -50,12 +50,12 @@ namespace FindAndReplace.Tests.DetectEncodingSpeedTest
 
 	    protected void CreateSpeedDir()
 	    {
-	        speedDir = "D:\\Temp\\FindAndReplaceTest2" + "\\Speed";
+	        speedDir = Path.GetTempPath() + "\\FindAndReplaceTest2" + "\\Speed";
 
 	        if (Directory.Exists(speedDir))
 	          
 	        {
-	            speedDir = "D:\\Temp\\FindAndReplaceTest2" + "\\Speed";
+	            speedDir = Path.GetTempPath() + "\\FindAndReplaceTest2" + "\\Speed";
 
 	            if (Directory.Exists(speedDir))
 	                Directory.Delete(speedDir, true);
@@ -68,7 +68,7 @@ namespace FindAndReplace.Tests.DetectEncodingSpeedTest
 
 	    protected void DeleteSpeedDir()
 	    {
-	        speedDir = "D:\\Temp\\FindAndReplaceTest2" + "\\Speed";
+	        speedDir = Path.GetTempPath() + "\\FindAndReplaceTest2" + "\\Speed";
 
 	        if (Directory.Exists(speedDir))
 	            Directory.Delete(speedDir, true);
@@ -143,7 +143,7 @@ namespace FindAndReplace.Tests.DetectEncodingSpeedTest
 		[Test]
 		public void MLang_Real_Dir_MultiThreaded()
 		{
-		    string filePath = "D:\\Temp\\FindAndReplaceTest3";
+		    string filePath = Path.GetTempPath() + "\\FindAndReplaceTest3";
 
             //http://msdn.microsoft.com/en-us/library/aa767865(v=vs.85).aspx
             //http://www.dotnetframework.org/default.aspx/Dotnetfx_Vista_SP2/Dotnetfx_Vista_SP2/8@0@50727@4016/DEVDIV/depot/DevDiv/releases/whidbey/NetFxQFE/ndp/clr/src/BCL/System/Text/MLangCodePageEncoding@cs/1/MLangCodePageEncoding@cs

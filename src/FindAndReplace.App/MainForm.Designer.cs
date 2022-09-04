@@ -199,7 +199,7 @@ namespace FindAndReplace.App
             this.helpToolStripMenuItem});
             this.mnuMain.Location = new System.Drawing.Point(0, 0);
             this.mnuMain.Name = "mnuMain";
-            this.mnuMain.Size = new System.Drawing.Size(884, 24);
+            this.mnuMain.Size = new System.Drawing.Size(884, 25);
             this.mnuMain.TabIndex = 5;
             this.mnuMain.Text = "menuStrip1";
             // 
@@ -209,20 +209,20 @@ namespace FindAndReplace.App
             this.viewOnlineHelpToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(47, 21);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // viewOnlineHelpToolStripMenuItem
             // 
             this.viewOnlineHelpToolStripMenuItem.Name = "viewOnlineHelpToolStripMenuItem";
-            this.viewOnlineHelpToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.viewOnlineHelpToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.viewOnlineHelpToolStripMenuItem.Text = "View Online Help";
             this.viewOnlineHelpToolStripMenuItem.Click += new System.EventHandler(this.viewOnlineHelpToolStripMenuItem_Click_1);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click_1);
             // 
@@ -233,7 +233,7 @@ namespace FindAndReplace.App
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.chkIncludeSubDirectories);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 24);
+            this.panel1.Location = new System.Drawing.Point(0, 25);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(884, 50);
             this.panel1.TabIndex = 38;
@@ -861,6 +861,7 @@ namespace FindAndReplace.App
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 89;
             this.pictureBox2.TabStop = false;
+            this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
             // 
             // MainForm
             // 

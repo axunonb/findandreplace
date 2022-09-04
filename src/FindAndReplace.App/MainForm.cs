@@ -1000,7 +1000,7 @@ namespace FindAndReplace.App
 
 		private void viewOnlineHelpToolStripMenuItem_Click_1(object sender, EventArgs e)
 		{
-			Process.Start("https://findandreplace.codeplex.com/documentation");
+            Tools.LaunchBrowser("https://github.com/zzzprojects/findandreplace");
 		}
 
 		
@@ -1069,17 +1069,18 @@ namespace FindAndReplace.App
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            Process.Start("http://www.zzzprojects.com/");
+            Tools.LaunchBrowser("http://www.zzzprojects.com/");
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://www.zzzprojects.com/");
+            Tools.LaunchBrowser("http://www.zzzprojects.com/");
         }
 
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-            Process.Start("http://www.zzzprojects.com/contribute");
+            Tools.LaunchBrowser("http://www.zzzprojects.com/contribute");
+
         }
     }
 }

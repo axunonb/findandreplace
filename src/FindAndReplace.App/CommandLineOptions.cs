@@ -7,6 +7,8 @@ using CommandLine.Text;
 
 namespace FindAndReplace.App
 {
+	// Source code of CommandLineParser 1.9.71
+	// used in this version: https://github.com/commandlineparser/commandline/tree/stable-v1.9.71.2
 	public class CommandLineOptions
 	{
 		#region Standard Option Attribute

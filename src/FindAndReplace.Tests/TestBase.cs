@@ -10,7 +10,7 @@ namespace FindAndReplace.Tests
 	[TestFixture]
 	public abstract class TestBase
 	{
-		protected  const string Dir_StyleSalt = "D:\\Temp\\FindAndReplaceTest\\StyleSalt";
+		protected string Dir_StyleSalt = Path.GetTempPath() + "\\FindAndReplaceTest\\StyleSalt";
 		protected string _tempDir;
 		protected string _speedDir;
 
