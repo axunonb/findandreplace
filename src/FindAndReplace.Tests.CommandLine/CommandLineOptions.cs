@@ -9,11 +9,10 @@ namespace FindAndReplace.Tests.CommandLine
 	{
 		#region Standard Option Attribute
 
-		[ParserState]
-		public IParserState LastParserState { get; set; }
+		public ParserResult<CommandLineOptions> ParserResult { get; set; }
 
-		[Option("testVal", Required = true, HelpText = "Test value to parse.")]
-		public string TestValue { get; set; }
+        [Option("testVal", Required = true, HelpText = "Test value to parse.")]
+        public string TestValue { get; set; } = string.Empty;
 
 		[Option("hasRegEx", HelpText = "Is Regex.")]
 		public bool HasRegEx { get; set; }
@@ -30,26 +29,30 @@ namespace FindAndReplace.Tests.CommandLine
 		#endregion
 
 
-		[HelpOption("help", HelpText = "Display this help screen.")]
-		public string GetUsage()
+        [Usage]
+        public static string Usage
+        {
+            get
+            {
+                var help = new HelpText("FindAndReplace.Tests.CommandLine");
+
+                help.Copyright = new CopyrightInfo("ENTech Solutions", DateTime.Now.Year);
+
+				/*
+                if (this.LastParserState != null && this.LastParserState.Errors.Count() > 0)
+                {
+                    HandleParsingErrorsInHelp(help);
+                }
+				*/
+				
+                return help;
+            }
+        }
+
+
+        private void HandleParsingErrorsInHelp(HelpText help)
 		{
-			var help = new HelpText("FindAndReplace.Tests.CommandLine");
-
-			help.Copyright = new CopyrightInfo("ENTech Solutions", DateTime.Now.Year);
-
-			if (this.LastParserState != null && this.LastParserState.Errors.Count > 0)
-			{
-				HandleParsingErrorsInHelp(help);
-			}
-			
-
-			return help;
-		}
-
-
-		private void HandleParsingErrorsInHelp(HelpText help)
-		{
-			var errors = help.RenderParsingErrorsText(this, 2); // indent with two spaces
+			var errors = HelpText.RenderParsingErrorsText(ParserResult, null, null, 2); // indent with two spaces
 			if (!string.IsNullOrEmpty(errors))
 			{
 				help.MaximumDisplayWidth = 160;

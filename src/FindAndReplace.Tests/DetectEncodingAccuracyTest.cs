@@ -89,7 +89,7 @@ namespace FindAndReplace.Tests
 
 
 
-		private void WriteToConsole(string line)
+		private static void WriteToConsole(string line)
 		{
 			Console.WriteLine(DateTime.Now.ToString("hh:mm:ssss") + " ThreadId: " + Thread.CurrentThread.ManagedThreadId + " : " + line);
 		}
@@ -151,7 +151,7 @@ namespace FindAndReplace.Tests
 		{
 			Encoding encoding = null;
 			if (bytes.Count() >= 4)
-				encoding = KlerksSoftEncodingDetector.DetectBOMBytes(bytes);
+				encoding = TextFileEncodingDetector.DetectBOMBytes(bytes);
 
 			return encoding;
 		}
@@ -159,7 +159,7 @@ namespace FindAndReplace.Tests
 
 		private static Encoding DetectEncodingUsingKlerksSoftHeuristics(byte[] bytes)
 		{
-			Encoding encoding = KlerksSoftEncodingDetector.DetectUnicodeInByteSampleByHeuristics(bytes);
+			Encoding encoding = TextFileEncodingDetector.DetectUnicodeInByteSampleByHeuristics(bytes);
 
 			return encoding;
 		}

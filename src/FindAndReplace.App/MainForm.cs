@@ -1,5 +1,7 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -12,7 +14,6 @@ using System.Linq;
 
 namespace FindAndReplace.App
 {
-
 	public partial class MainForm : Form
 	{
 		//public const int ExtraWidthWhenResults = 335;
@@ -169,11 +170,11 @@ namespace FindAndReplace.App
 				{
 					gvResults.Rows.Add();
 
-					int currentRow = gvResults.Rows.Count - 1;
+					var currentRow = gvResults.Rows.Count - 1;
 
 					gvResults.Rows[currentRow].ContextMenuStrip = CreateContextMenu(currentRow);
 
-					int columnIndex = 0;
+					var columnIndex = 0;
 					gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileName;
 					gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileRelativePath;
 
@@ -189,7 +190,7 @@ namespace FindAndReplace.App
 
 					if (findResultItem.IsSuccess && findResultItem.NumMatches > 0) //Account for errors and IncludeFilesWithoutMatches
 					{
-						string fileContent = string.Empty;
+						var fileContent = string.Empty;
 
 						using (var sr = new StreamReader(findResultItem.FilePath, findResultItem.FileEncoding))
 						{
@@ -420,7 +421,7 @@ namespace FindAndReplace.App
 
 			if (String.IsNullOrEmpty(txtReplace.Text))
 			{
-				DialogResult dlgResult = MessageBox.Show(this,
+				var dlgResult = MessageBox.Show(this,
 				                                         "Are you sure you would like to replace with an empty string?",
 				                                         "Replace Confirmation",
 				                                         MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -500,11 +501,11 @@ namespace FindAndReplace.App
 				{
 					gvResults.Rows.Add();
 
-					int currentRow = gvResults.Rows.Count - 1;
+					var currentRow = gvResults.Rows.Count - 1;
 
 					gvResults.Rows[currentRow].ContextMenuStrip = CreateContextMenu(currentRow);
 
-					int columnIndex = 0;
+					var columnIndex = 0;
 					gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileName;
 					gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileRelativePath;
 
@@ -522,7 +523,7 @@ namespace FindAndReplace.App
 					if (replaceResultItem.IsSuccess && replaceResultItem.NumMatches > 0)
 						//Account for errors and IncludeFilesWithoutMatches
 					{
-						string fileContent = string.Empty;
+						var fileContent = string.Empty;
 
 
                         using (var sr = new StreamReader(replaceResultItem.FilePath, replaceResultItem.FileEncoding))
@@ -601,7 +602,7 @@ namespace FindAndReplace.App
 
 			var replacer = GetReplacer();
 
-			string s =
+			var s =
 				String.Format(
 					"\"{0}\" {1}",
 					Application.ExecutablePath,
@@ -694,7 +695,7 @@ namespace FindAndReplace.App
 			if (e.RowIndex == -1) //heading
 				return;
 
-			int matchedPreviewColIndex = gvResults.ColumnCount - 1; //Always last column
+			var matchedPreviewColIndex = gvResults.ColumnCount - 1; //Always last column
 
 			if (gvResults.Rows[e.RowIndex].Cells[matchedPreviewColIndex].Value == null)
 			{
@@ -711,7 +712,8 @@ namespace FindAndReplace.App
 
 			txtMatchesPreview.Text = matchesPreviewText;
 
-			var font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
+            //var font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
+            var font = new Font(txtMatchesPreview.Font.Name, txtMatchesPreview.Font.Size, FontStyle.Bold); // looks better
 
 			//Use _lastOperation form data since user may change it before clicking on preview
 			var findText = _lastOperationFormData.IsFindOnly
@@ -720,13 +722,13 @@ namespace FindAndReplace.App
 			findText = findText.Replace("\r\n", "\n");
 
 			findText = ((_lastOperationFormData.IsRegEx || _lastOperationFormData.UseEscapeChars) && _lastOperationFormData.IsFindOnly) ? findText : Regex.Escape(findText);
-			var mathches = Regex.Matches(txtMatchesPreview.Text, findText,
+			var matches = Regex.Matches(txtMatchesPreview.Text, findText,
 			                             Utils.GetRegExOptions(_lastOperationFormData.IsCaseSensitive));
 
-			int count = 0;
-			int maxCount = 1000;
+			var count = 0;
+			var maxCount = 1000;
 
-			foreach (Match match in mathches)
+			foreach (Match match in matches)
 			{
 				txtMatchesPreview.SelectionStart = match.Index;
 
@@ -755,7 +757,7 @@ namespace FindAndReplace.App
 
 			rowNumbers = rowNumbers.Distinct().OrderBy(r => r).ToList();
 			var prevLineIndex = 0;
-			string lineSeparator =
+			var lineSeparator =
 				("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
 
 			foreach (var rowNumber in rowNumbers)
@@ -799,7 +801,7 @@ namespace FindAndReplace.App
 		{
 			var filePath = gvResults.Rows[rowIndex].Cells[1].Value.ToString();
 
-			string file = txtDir.Text + filePath.TrimStart('.');
+			var file = txtDir.Text + filePath.TrimStart('.');
 			Process.Start(file);
 		}
 
@@ -811,7 +813,7 @@ namespace FindAndReplace.App
 			var openMenuItem = new ToolStripMenuItem("Open");
 
 			var eventArgs = new GVResultEventArgs();
-			eventArgs.cellRow = rowNumber;
+			eventArgs.CellRow = rowNumber;
 			openMenuItem.Click += delegate { contextMenu_ClickOpen(this, eventArgs); };
 
 			var openFolderMenuItem = new ToolStripMenuItem("Open Containing Folder");
@@ -825,14 +827,14 @@ namespace FindAndReplace.App
 
 		private void contextMenu_ClickOpen(object sender, GVResultEventArgs e)
 		{
-			OpenFileUsingExternalApp(e.cellRow);
+			OpenFileUsingExternalApp(e.CellRow);
 		}
 
 		private void contextMenu_ClickOpenFolder(object sender, GVResultEventArgs e)
 		{
-			var filePath = gvResults.Rows[e.cellRow].Cells[1].Value.ToString();
+			var filePath = gvResults.Rows[e.CellRow].Cells[1].Value.ToString();
 
-			string argument = @"/select, " + txtDir.Text + filePath.TrimStart('.');
+			var argument = @"/select, " + txtDir.Text + filePath.TrimStart('.');
 			Process.Start("explorer.exe", argument);
 		}
 
@@ -878,25 +880,24 @@ namespace FindAndReplace.App
 
 		private void HideStats()
 		{
-			lblStats.Text = String.Empty;
+			lblStats.Text = string.Empty;
 		}
 
 
 		public class GVResultEventArgs : EventArgs
 		{
-			public int cellRow { get; set; }
+			public int CellRow { get; set; }
 		}
 
 		private void btnCancel_Click(object sender, EventArgs e)
-		{
-			if (_currentThread.IsAlive)
-			{
-				if (_isFindOnly)
-					_finder.CancelFind();
-				else
-					_replacer.CancelReplace();
-			}
-		}
+        {
+            if (!_currentThread.IsAlive) return;
+            
+            if (_isFindOnly)
+                _finder.CancelFind();
+            else
+                _replacer.CancelReplace();
+        }
 
 		private void InitWithRegistryData()
 		{
@@ -970,19 +971,15 @@ namespace FindAndReplace.App
 
 		private void btnSwap_Click(object sender, EventArgs e)
 		{
-			string findText = txtFind.Text;
-
-			txtFind.Text = txtReplace.Text;
-			txtReplace.Text = findText;
-		}
+			// Swap
+			(txtFind.Text, txtReplace.Text) = (txtReplace.Text, txtFind.Text);
+        }
 
 		private List<string> GetEncodings()
 		{
-			var result = new List<string>();
+			var result = new List<string> { "Auto Detect" };
 
-			result.Add("Auto Detect");
-
-			foreach (EncodingInfo ei in Encoding.GetEncodings().OrderBy(ei=>ei.Name))
+            foreach (var ei in Encoding.GetEncodings().OrderBy(ei=>ei.Name))
 			{
 				//Encoding e = ei.GetEncoding();
 
@@ -994,35 +991,33 @@ namespace FindAndReplace.App
 
 		private void aboutToolStripMenuItem_Click_1(object sender, EventArgs e)
 		{
-			AboutBox aboutBox = new AboutBox();
+			var aboutBox = new AboutBox();
 			aboutBox.ShowDialog();
 		}
 
 		private void viewOnlineHelpToolStripMenuItem_Click_1(object sender, EventArgs e)
 		{
-			Process.Start("https://findandreplace.codeplex.com/documentation");
+			Tools.LaunchBrowser("https://github.com/zzzprojects/findandreplace");
 		}
-
-		
 
 		private Finder GetFinder()
 		{
-			var finder = new Finder();
-			finder.Dir = txtDir.Text;
+			var finder = new Finder
+            {
+                Dir = txtDir.Text,
+                IncludeSubDirectories = chkIncludeSubDirectories.Checked,
+                FileMask = txtFileMask.Text,
+                FindTextHasRegEx = chkIsRegEx.Checked,
+                FindText = CleanRichBoxText(txtFind.Text),
+                IsCaseSensitive = chkIsCaseSensitive.Checked,
+                SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked,
+                IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked,
+                ExcludeFileMask = txtExcludeFileMask.Text,
+                ExcludeDir = txtExcludeDir.Text,
+                UseEscapeChars = chkUseEscapeChars.Checked
+            };
 
-			finder.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
-			finder.FileMask = txtFileMask.Text;
-			finder.FindTextHasRegEx = chkIsRegEx.Checked;
-			finder.FindText = CleanRichBoxText(txtFind.Text);
-			finder.IsCaseSensitive = chkIsCaseSensitive.Checked;
-			finder.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
-			finder.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
-			finder.ExcludeFileMask = txtExcludeFileMask.Text;
-		    finder.ExcludeDir = txtExcludeDir.Text;
-
-            finder.UseEscapeChars = chkUseEscapeChars.Checked;
-
-			if (cmbEncoding.SelectedIndex > 0)
+            if (cmbEncoding.SelectedIndex > 0)
 				finder.AlwaysUseEncoding = Utils.GetEncodingByName(cmbEncoding.Text);
 
 			return finder;
@@ -1038,24 +1033,23 @@ namespace FindAndReplace.App
 
 		private Replacer GetReplacer()
 		{
-			var replacer = new Replacer();
-
-			replacer.Dir = txtDir.Text;
-			replacer.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
-
-			replacer.FileMask = txtFileMask.Text;
-			replacer.ExcludeFileMask = txtExcludeFileMask.Text;
-		    replacer.ExcludeDir = txtExcludeDir.Text;
-            replacer.FindText = CleanRichBoxText(txtFind.Text);
-			replacer.IsCaseSensitive = chkIsCaseSensitive.Checked;
-			replacer.FindTextHasRegEx = chkIsRegEx.Checked;
-			replacer.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
-			replacer.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
-			replacer.ReplaceText =  CleanRichBoxText(txtReplace.Text);
-			replacer.UseEscapeChars = chkUseEscapeChars.Checked;
-		    replacer.IsKeepModifiedDate = chkKeepModifiedDate.Checked;
-
-
+			var replacer = new Replacer
+            {
+                Dir = txtDir.Text,
+                IncludeSubDirectories = chkIncludeSubDirectories.Checked,
+                FileMask = txtFileMask.Text,
+                ExcludeFileMask = txtExcludeFileMask.Text,
+                ExcludeDir = txtExcludeDir.Text,
+                FindText = CleanRichBoxText(txtFind.Text),
+                IsCaseSensitive = chkIsCaseSensitive.Checked,
+                FindTextHasRegEx = chkIsRegEx.Checked,
+                SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked,
+                IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked,
+                ReplaceText = CleanRichBoxText(txtReplace.Text),
+                UseEscapeChars = chkUseEscapeChars.Checked,
+                IsKeepModifiedDate = chkKeepModifiedDate.Checked
+            };
+			
             if (cmbEncoding.SelectedIndex > 0)
 				replacer.AlwaysUseEncoding = Utils.GetEncodingByName(cmbEncoding.Text);
 
@@ -1069,17 +1063,17 @@ namespace FindAndReplace.App
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            Process.Start("http://www.zzzprojects.com/");
+            Tools.LaunchBrowser("http://www.zzzprojects.com/");
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://www.zzzprojects.com/");
+            Tools.LaunchBrowser("http://www.zzzprojects.com/");
         }
 
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-            Process.Start("http://www.zzzprojects.com/contribute");
+            Tools.LaunchBrowser("http://www.zzzprojects.com/contribute");
         }
     }
 }

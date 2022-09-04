@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -29,8 +27,8 @@ namespace FindAndReplace.App
 	            return result;
 	        }
 
-	        Regex dirRegex = new Regex(@"^(([a-zA-Z]:)|(\\{2}[^\/\\:*?<>|]+))(\\([^\/\\:*?<>|]*))*(\\)?$");
-	        Regex dirRegexNotRooted = new Regex(@"(\\([^\/\\:*?<>|]*))*(\\)?$");
+	        var dirRegex = new Regex(@"^(([a-zA-Z]:)|(\\{2}[^\/\\:*?<>|]+))(\\([^\/\\:*?<>|]*))*(\\)?$");
+	        var dirRegexNotRooted = new Regex(@"(\\([^\/\\:*?<>|]*))*(\\)?$");
 	        if (Path.IsPathRooted(dir))
 	        {
 	            if (!dirRegex.IsMatch(dir))
@@ -67,7 +65,7 @@ namespace FindAndReplace.App
 			if (text.Trim() == "")
 			{
 				result.IsSuccess = false;
-				result.ErrorMessage = String.Format("{0} is required", itemName);
+				result.ErrorMessage = string.Format("{0} is required", itemName);
 				return result;
 			}
 
@@ -115,12 +113,12 @@ namespace FindAndReplace.App
 
 			try
 			{
-				Regex.Unescape(text);
+				_ = Regex.Unescape(text);
 			}
 			catch (ArgumentException e)
 			{
-				string msgPart = "Unrecognized escape sequence";
-				int pos = e.Message.IndexOf(msgPart);
+				var msgPart = "Unrecognized escape sequence";
+				var pos = e.Message.IndexOf(msgPart);
 				if (pos == -1)
 					throw;
 
@@ -133,7 +131,7 @@ namespace FindAndReplace.App
 				if (EndsWithSingleSlash(text))
 				{
 					result.IsSuccess = false;
-					result.ErrorMessage = @"Illegal \ at end of pattern";
+					result.ErrorMessage = @"Invalid \ at end of pattern";
 				}
 			}
 

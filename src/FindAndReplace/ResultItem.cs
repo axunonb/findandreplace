@@ -8,16 +8,16 @@ namespace FindAndReplace
 {
 	abstract public class ResultItem
 	{
-		public string FileName { get; set; }
-		public string FilePath { get; set; }
-		public string FileRelativePath { get; set; }
-		public Encoding FileEncoding { get; set; }
+		public string FileName { get; set; } = string.Empty;
+		public string FilePath { get; set; } = string.Empty;
+		public string FileRelativePath { get; set; } = string.Empty;
+		public Encoding? FileEncoding { get; set; }
 		public int NumMatches { get; set; }
-		public List<LiteMatch> Matches { get; set; }
+        public List<LiteMatch> Matches { get; set; } = new();
 		public bool IsSuccess { get; set; }
 		public bool IsBinaryFile { get; set; }
 		public bool FailedToOpen { get; set; }
-		public string ErrorMessage { get; set; }
+		public string ErrorMessage { get; set; } = string.Empty;
 
 		internal bool IncludeFilesWithoutMatches { get; set; }
 		

@@ -63,7 +63,7 @@ namespace FindAndReplace
 				if (!IsStarted())
 					throw new InvalidOperationException("Stopwatch needs to be running");
 
-				TimeSpan timeSpan = _timeSpan.Add(DateTime.Now.Subtract(_startTime));
+				var timeSpan = _timeSpan.Add(DateTime.Now.Subtract(_startTime));
 				return timeSpan;
 			}
 		}
@@ -76,7 +76,7 @@ namespace FindAndReplace
 				if (!IsStarted())
 					throw new InvalidOperationException("Stopwatch needs to be running");
 
-				TimeSpan timeSpan = _timeSpan.Add(DateTime.Now.Subtract(_startTime));
+				var timeSpan = _timeSpan.Add(DateTime.Now.Subtract(_startTime));
 
 				return (int)timeSpan.TotalMilliseconds;
 			}
@@ -95,7 +95,7 @@ namespace FindAndReplace
 		{
 			get
 			{
-				int stops = _stopCount;
+				var stops = _stopCount;
 				if (_stopCount < 1)
 					stops = 1;
 				return (Milliseconds / stops);
@@ -203,19 +203,19 @@ namespace FindAndReplace
 			decimal secs;
 			decimal percent;
 
-			foreach (string key in _stopWatches.Keys)
+			foreach (var key in _stopWatches.Keys)
 			{
 				stopWatch = _stopWatches[key];
 				secs = Math.Round((((decimal)stopWatch.Milliseconds) / 1000), 1);
 
 				line = key + ": " + secs + " secs, " + stopWatch.Milliseconds + " millisecs";
 
-				decimal avgDuration = Math.Round((((decimal)stopWatch.Milliseconds) / stopWatch.StopCount), 1);
+				var avgDuration = Math.Round((((decimal)stopWatch.Milliseconds) / stopWatch.StopCount), 1);
 				line += ", " + stopWatch.StopCount + " stops, Avg Duration " + avgDuration + " millisecs";
 
 				if (totalMilliseconds != null)
 				{
-					percent = Math.Round((stopWatch.Milliseconds / (decimal)totalMilliseconds.Value) * 100, 1);
+					percent = Math.Round((stopWatch.Milliseconds / (decimal)(totalMilliseconds.Value > 0 ? totalMilliseconds.Value : 1)) * 100, 1);
 					line += ", " + percent + "%";
 				}
 				sb.AppendLine(line);

@@ -70,10 +70,10 @@ namespace FindAndReplace
 			Verify.Argument.IsNotEmpty(FindText, "FindText");
 			Verify.Argument.IsNotNull(ReplaceText, "ReplaceText"); 
             
-            Status status = Status.Processing;
+            var status = Status.Processing;
 
 			var startTime = DateTime.Now;
-			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories, ExcludeFileMask, ExcludeDir);
+			var filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories, ExcludeFileMask, ExcludeDir);
 
 			var resultItems = new List<ReplaceResultItem>();
 			var stats = new Stats();
@@ -81,7 +81,7 @@ namespace FindAndReplace
 
 			var startTimeProcessingFiles = DateTime.Now;
 
-			foreach (string filePath in filesInDirectory)
+			foreach (var filePath in filesInDirectory)
 			{
 				var resultItem = ReplaceTextInFile(filePath, IsKeepModifiedDate);
 				stats.Files.Processed++;
@@ -140,7 +140,7 @@ namespace FindAndReplace
 
 		private ReplaceResultItem ReplaceTextInFile(string filePath, bool IsKeepModifiedDate)
 		{
-			string fileContent = string.Empty;
+			var fileContent = string.Empty;
 
 			var resultItem = new ReplaceResultItem();
 			resultItem.IsSuccess = true;
@@ -182,7 +182,7 @@ namespace FindAndReplace
 			if (!resultItem.IsSuccess)
 				return resultItem;
 
-			Encoding encoding = DetectEncoding(sampleBytes);
+			var encoding = DetectEncoding(sampleBytes);
 			if (encoding == null)
 			{
 				resultItem.IsSuccess = false;
@@ -203,7 +203,7 @@ namespace FindAndReplace
 				fileContent = sr.ReadToEnd();
 			}
 
-			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
+			var regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
 			var matches = Utils.FindMatches(fileContent, FindText, FindTextHasRegEx, UseEscapeChars, regexOptions);
 
@@ -212,13 +212,13 @@ namespace FindAndReplace
 
 			if (matches.Count > 0)
 			{
-				string escapedFindText = FindText;
+				var escapedFindText = FindText;
 				if (!FindTextHasRegEx && !UseEscapeChars)
 					escapedFindText = Regex.Escape(FindText);
 
-				string newContent = Regex.Replace(fileContent, escapedFindText, UseEscapeChars ? Regex.Unescape(ReplaceText) : ReplaceText, regexOptions);
+				var newContent = Regex.Replace(fileContent, escapedFindText, UseEscapeChars ? Regex.Unescape(ReplaceText) : ReplaceText, regexOptions);
 
-			    DateTime dt = DateTime.Now;
+			    var dt = DateTime.Now;
 
                 try
 				{

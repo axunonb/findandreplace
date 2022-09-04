@@ -27,7 +27,7 @@ namespace FindAndReplace
 
 		public static string[] GetFilesInDirectory(string dir, string fileMask, bool includeSubDirectories, string excludeMask, string excludeDir)
 		{
-			SearchOption searchOption = includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+			var searchOption = includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
 			var filesInDirectory = new List<string>();
 			var fileMasks = fileMask.Split(',');
@@ -68,15 +68,15 @@ namespace FindAndReplace
 			if (!String.IsNullOrEmpty(excludeMask))
 			{
 				var tempFilesInDirectory = new List<string>();
-				List<string> excludeFileMasks = excludeMask.Split(',').ToList();
+				var excludeFileMasks = excludeMask.Split(',').ToList();
 				excludeFileMasks = excludeFileMasks.Select(fm => WildcardToRegex(fm.Trim())).ToList();
 
 
 				foreach (var excludeFileMaskRegExPattern in excludeFileMasks)
 				{
-					foreach (string filePath in filesInDirectory)
+					foreach (var filePath in filesInDirectory)
 					{
-						string fileName = Path.GetFileName(filePath);
+						var fileName = Path.GetFileName(filePath);
 						if (fileName == null) //Somehow it can be null. So add a check
 							continue;
 					    fileName = filePath;
@@ -97,13 +97,13 @@ namespace FindAndReplace
 
 		public static FileGetter CreateFileGetter(string dir, string fileMask, bool includeSubDirectories, string excludeMask)
 		{
-			SearchOption searchOption = includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+			var searchOption = includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
 			var fileMasks = fileMask.Split(',').ToList();
 			fileMasks = fileMasks.Select(fm => fm.Trim()).ToList();
 
-			List<string> excludeFileMasks = null;
-			if (!String.IsNullOrEmpty(excludeMask))
+            List<string>? excludeFileMasks = null;
+			if (!string.IsNullOrEmpty(excludeMask))
 			{
 				excludeFileMasks = excludeMask.Split(',').ToList();
 				excludeFileMasks = excludeFileMasks.Select(fm => fm.Trim()).ToList();
@@ -134,7 +134,7 @@ namespace FindAndReplace
 
 		public static bool IsBinaryFile(byte[] bytes)
 		{
-			string text = System.Text.Encoding.Default.GetString(bytes);
+			var text = System.Text.Encoding.Default.GetString(bytes);
 			return IsBinaryFile(text);
 		}
 
@@ -148,9 +148,9 @@ namespace FindAndReplace
 
 			var temp = new List<MatchPreviewLineNumber>();
 
-			int replacedTextLength = 0;
+			var replacedTextLength = 0;
 
-			foreach (LiteMatch match in matches)
+			foreach (var match in matches)
 			{
 				var lineIndexStart = DetectMatchLine(lines.ToArray(), GetMatchIndex(match.Index, replacedTextLength, isReplace));
 				var lineIndexEnd = DetectMatchLine(lines.ToArray(),
@@ -158,7 +158,7 @@ namespace FindAndReplace
 
 				replacedTextLength += match.Length;
 
-				for (int i = lineIndexStart - 2; i <= lineIndexEnd + 2; i++)
+				for (var i = lineIndexStart - 2; i <= lineIndexEnd + 2; i++)
 				{
 					if (i >= 0 && i < lines.Count())
 					{
@@ -175,11 +175,11 @@ namespace FindAndReplace
 
 		public static string FormatTimeSpan(TimeSpan timeSpan)
 		{
-			string result = String.Empty;
+			var result = String.Empty;
 
-			int h = timeSpan.Hours;
-			int m = timeSpan.Minutes;
-			int s = timeSpan.Seconds;
+			var h = timeSpan.Hours;
+			var m = timeSpan.Minutes;
+			var s = timeSpan.Seconds;
 
 			if (h > 0)
 			{
@@ -215,8 +215,8 @@ namespace FindAndReplace
 		private static int DetectMatchLine(string[] lines, int position)
 		{
 			var separatorLength = 2;
-			int i = 0;
-			int charsCount = lines[0].Length + separatorLength;
+			var i = 0;
+			var charsCount = lines[0].Length + separatorLength;
 
 			while (charsCount <= position)
 			{
@@ -236,10 +236,10 @@ namespace FindAndReplace
 		public static byte[] ReadFileContentSample(string filePath, int maxSize = 10240)
 		{
 			byte[] buffer;
-			using (FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+			using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
 			{
-				long streamLength = stream.Length;
-				long bufferSize = Math.Min(streamLength, maxSize);
+				var streamLength = stream.Length;
+				var bufferSize = Math.Min(streamLength, maxSize);
 
 				buffer = new byte[bufferSize];
 
@@ -270,7 +270,7 @@ namespace FindAndReplace
 			else
 				matches = Regex.Matches(fileContent, findText, regexOptions);
 
-			List<LiteMatch> liteMatches = new List<LiteMatch>();
+			var liteMatches = new List<LiteMatch>();
 			foreach (Match match in matches)
 			{
 				liteMatches.Add(new LiteMatch {Index = match.Index, Length = match.Length});

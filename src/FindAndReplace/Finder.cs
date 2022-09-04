@@ -80,7 +80,7 @@ namespace FindAndReplace
 			Verify.Argument.IsNotEmpty(FileMask, "FileMask");
 			Verify.Argument.IsNotEmpty(FindText, "FindText");
 
-			Status status = Status.Processing;
+			var status = Status.Processing;
 
 			StopWatch.Start("GetFilesInDirectory");
 
@@ -88,7 +88,7 @@ namespace FindAndReplace
 			var startTime = DateTime.Now;
 
 
-			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories, ExcludeFileMask, ExcludeDir);
+			var filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories, ExcludeFileMask, ExcludeDir);
 
 			var resultItems = new List<FindResultItem>();
 			var stats = new Stats();
@@ -99,7 +99,7 @@ namespace FindAndReplace
 
 			var startTimeProcessingFiles = DateTime.Now;
 
-			foreach (string filePath in filesInDirectory)
+			foreach (var filePath in filesInDirectory)
 			{
 
 				stats.Files.Processed++;
@@ -212,7 +212,7 @@ namespace FindAndReplace
 				StopWatch.Stop("IsBinaryFile");
 			}
 
-			Encoding encoding = DetectEncoding(sampleBytes);
+			var encoding = DetectEncoding(sampleBytes);
 			if (encoding == null)
 			{
 				resultItem.IsSuccess = false;
@@ -234,7 +234,7 @@ namespace FindAndReplace
 			StopWatch.Stop("ReadFullFileContent");
 
 			StopWatch.Start("FindMatches");
-			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
+			var regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
 			resultItem.Matches = Utils.FindMatches(fileContent, FindText, FindTextHasRegEx, UseEscapeChars, regexOptions);
 

@@ -1,18 +1,36 @@
-﻿using System;
+using CommandLine;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
-using CommandLine;
-
-
 
 namespace FindAndReplace.App
 {
+    internal static class Program_
+    {
+
+
+        /// <summary>
+        ///  The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main_()
+        {
+            // To customize application configuration such as set high DPI settings or default font,
+            // see https://aka.ms/applicationconfiguration.
+            ApplicationConfiguration.Initialize();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            Application.Run(new MainForm());
+        }
+    }
+
+
 	//from http://www.rootsilver.com/2007/08/how-to-create-a-consolewindow
 	internal static class Program
 	{
@@ -36,30 +54,29 @@ namespace FindAndReplace.App
 		/// </summary>
 		[STAThread]
 		private static int Main(string[] args)
-		{
+        {
+            //args = new[] { "--cl", "--help" };
 			// from http://blogs.msdn.com/b/microsoft_press/archive/2010/02/03/jeffrey-richter-excerpt-2-from-clr-via-c-third-edition.aspx
 			AppDomain.CurrentDomain.AssemblyResolve += ResolveEventHandler;
 
 			if (args.Length != 0 && args.Contains("--cl"))
 			{ 
-				Process process = null;
+				Process process;
 
 				if (args.Contains("--consoleByProcessId"))
 				{
-					//Get a parent procss for see where send the output.
-					process = Process.GetProcessById(Process.GetCurrentProcess().Id).Parent();
+					//Get a parent process for see where send the output.
+					process = Process.GetProcessById(Environment.ProcessId).Parent();
 				}
 				else
 				{
-					//Get a pointer to the forground window.  The idea here is that
-					//IF the user is starting our application from an existing console
-					//shell, that shell will be the uppermost window.  We'll get it
-					//and attach to it
-					IntPtr ptr = GetForegroundWindow();
+					// Get a pointer to the foreground window. The idea here is that
+					// If the user is starting our application from an existing console
+					// shell, that shell will be the uppermost window. We'll get it
+					// and attach to it.
+					var ptr = GetForegroundWindow();
 
-					int u;
-
-					GetWindowThreadProcessId(ptr, out u);
+					var processId = GetWindowThreadProcessId(ptr, out var u);
 
 					process = Process.GetProcessById(u);
 				}
@@ -76,7 +93,7 @@ namespace FindAndReplace.App
                 }
 
                 var clRunner = new CommandLineRunner();
-				int dosErrorLevel = clRunner.Run(args);
+				var dosErrorLevel = clRunner.Run(args);
 
 				FreeConsole();
 				return dosErrorLevel;
@@ -91,26 +108,25 @@ namespace FindAndReplace.App
 			}
 		}
 
-		private static Assembly ResolveEventHandler(Object sender, ResolveEventArgs args)
+		private static Assembly? ResolveEventHandler(object? sender, ResolveEventArgs args)
 		{
-			String dllName = new AssemblyName(args.Name).Name + ".dll";
+			var dllName = new AssemblyName(args.Name).Name + ".dll";
 
-			var assem = Assembly.GetExecutingAssembly();
+			var assembly = Assembly.GetExecutingAssembly();
 
-			String resourceName = assem.GetManifestResourceNames().FirstOrDefault(rn => rn.EndsWith(dllName));
+			var resourceName = assembly.GetManifestResourceNames().FirstOrDefault(rn => rn.EndsWith(dllName));
 
 			if (resourceName == null) return null; // Not found, maybe another handler will find it
 
-			using (var stream = assem.GetManifestResourceStream(resourceName))
-			{
-				Byte[] assemblyData = new Byte[stream.Length];
+            using var stream = assembly.GetManifestResourceStream(resourceName);
+			if (stream == null) return null;
 
-				stream.Read(assemblyData, 0, assemblyData.Length);
+            var assemblyData = new byte[stream.Length];
 
-				return Assembly.Load(assemblyData);
+            _ = stream.Read(assemblyData, 0, assemblyData.Length);
 
-			}
-		}
+            return Assembly.Load(assemblyData);
+        }
 	}
 
 	public class CommandLineRunner
@@ -123,14 +139,14 @@ namespace FindAndReplace.App
 		};
 
 
-		private CommandLineOptions _options;
+		private CommandLineOptions? _options;
 
 		public int Run(string[] args)
 		{
 			DosErrorLevel dosErrorLevel;
 
 			_options = new CommandLineOptions();
-			if (!CommandLine.Parser.Default.ParseArguments(args, _options))
+			if (!Parser.Default.ParseArguments(args, new []{typeof(CommandLineOptions)}).Errors.Any())
 			{
 				Console.ReadKey();
 				Environment.Exit(1);
@@ -146,22 +162,22 @@ namespace FindAndReplace.App
 			if (_options.IsFindTextHasRegEx)
 				validationResultList.Add(ValidationUtils.IsValidRegExp(_options.FindText, "find"));
 
-			if (!(String.IsNullOrEmpty(_options.AlwaysUseEncoding)))
+			if (!(string.IsNullOrEmpty(_options.AlwaysUseEncoding)))
 				validationResultList.Add(ValidationUtils.IsValidEncoding(_options.AlwaysUseEncoding, "alwaysUseEncoding"));
 
-			if (!(String.IsNullOrEmpty(_options.DefaultEncodingIfNotDetected)))
+			if (!(string.IsNullOrEmpty(_options.DefaultEncodingIfNotDetected)))
 				validationResultList.Add(ValidationUtils.IsValidEncoding(_options.DefaultEncodingIfNotDetected, "alwaysUseEncoding"));
 
 			if (_options.UseEscapeChars)
 			{
 				validationResultList.Add(ValidationUtils.IsValidEscapeSequence(_options.FindText, "find"));
 				
-				if (!String.IsNullOrEmpty(_options.ReplaceText))
+				if (!string.IsNullOrEmpty(_options.ReplaceText))
 					validationResultList.Add(ValidationUtils.IsValidEscapeSequence(_options.ReplaceText, "replace"));
 			}
 
 
-			if (!String.IsNullOrEmpty(_options.LogFile))
+			if (!string.IsNullOrEmpty(_options.LogFile))
 			{
 				var fs1 = new FileStream(_options.LogFile, FileMode.Append);
 				var sw1 = new StreamWriter(fs1);
@@ -175,7 +191,7 @@ namespace FindAndReplace.App
 				foreach (var validationResult in validationResultList)
 				{
 					if (!validationResult.IsSuccess)
-						Console.WriteLine(String.Format("{0}: {1}", validationResult.FieldName, validationResult.ErrorMessage));
+						Console.WriteLine(string.Format("{0}: {1}", validationResult.FieldName, validationResult.ErrorMessage));
 				}
 
 				Console.WriteLine("");
@@ -186,33 +202,31 @@ namespace FindAndReplace.App
 			{
 				dosErrorLevel = DosErrorLevel.Success;
 
-				bool hasRegEx = _options.IsFindTextHasRegEx;
+				var hasRegEx = _options.IsFindTextHasRegEx;
 
 				if (_options.ReplaceText == null)
 				{
-					var finder = new Finder();
-					finder.Dir = _options.Dir;
-					finder.IncludeSubDirectories = _options.IncludeSubDirectories;
-					finder.FileMask = _options.FileMask;
-					finder.ExcludeFileMask = _options.ExcludeFileMask;
-				    finder.ExcludeDir = _options.ExcludeDir;
+					var finder = new Finder
+                    {
+                        Dir = _options.Dir,
+                        IncludeSubDirectories = _options.IncludeSubDirectories,
+                        FileMask = _options.FileMask,
+                        ExcludeFileMask = _options.ExcludeFileMask,
+                        ExcludeDir = _options.ExcludeDir,
+                        FindText = CommandLineUtils.DecodeText(_options.FindText, false, hasRegEx, _options.UseEscapeChars),
+                        IsCaseSensitive = _options.IsCaseSensitive,
+                        FindTextHasRegEx = hasRegEx,
+                        SkipBinaryFileDetection = _options.SkipBinaryFileDetection,
+                        IncludeFilesWithoutMatches = _options.IncludeFilesWithoutMatches,
+                        AlwaysUseEncoding = Utils.GetEncodingByName(_options.AlwaysUseEncoding),
+                        DefaultEncodingIfNotDetected = Utils.GetEncodingByName(_options.DefaultEncodingIfNotDetected),
+                        UseEscapeChars = _options.UseEscapeChars,
+                        IsSilent = _options.Silent
+                    };
 
-                    finder.FindText = CommandLineUtils.DecodeText(_options.FindText, false, hasRegEx, _options.UseEscapeChars);
-					finder.IsCaseSensitive = _options.IsCaseSensitive;
-					finder.FindTextHasRegEx = hasRegEx;
-					finder.SkipBinaryFileDetection = _options.SkipBinaryFileDetection;
-					finder.IncludeFilesWithoutMatches = _options.IncludeFilesWithoutMatches;
-
-					finder.AlwaysUseEncoding = Utils.GetEncodingByName(_options.AlwaysUseEncoding);
-					finder.DefaultEncodingIfNotDetected = Utils.GetEncodingByName(_options.DefaultEncodingIfNotDetected);
-					finder.UseEscapeChars = _options.UseEscapeChars;
-
-					finder.IsSilent = _options.Silent;
-
-					finder.FileProcessed += OnFinderFileProcessed;
+                    finder.FileProcessed += OnFinderFileProcessed;
 
 					var findResult = finder.Find();
-
 
 					if (_options.SetErrorLevelIfAnyFileErrors)
 						if (findResult.Stats.Files.FailedToRead > 0)
@@ -220,31 +234,27 @@ namespace FindAndReplace.App
 				}
 				else
 				{
-					var replacer = new Replacer();
-					replacer.Dir = _options.Dir;
+					var replacer = new Replacer
+                    {
+                        Dir = _options.Dir,
+                        IncludeSubDirectories = _options.IncludeSubDirectories,
+                        FileMask = _options.FileMask,
+                        ExcludeFileMask = _options.ExcludeFileMask,
+                        ExcludeDir = _options.ExcludeDir,
+                        FindText = CommandLineUtils.DecodeText(_options.FindText, false, hasRegEx, _options.UseEscapeChars),
+                        IsCaseSensitive = _options.IsCaseSensitive,
+                        FindTextHasRegEx = _options.IsFindTextHasRegEx,
+                        SkipBinaryFileDetection = _options.SkipBinaryFileDetection,
+                        IncludeFilesWithoutMatches = _options.IncludeFilesWithoutMatches,
+                        ReplaceText = CommandLineUtils.DecodeText(_options.ReplaceText, true, _options.IsFindTextHasRegEx, _options.UseEscapeChars),
+                        AlwaysUseEncoding = Utils.GetEncodingByName(_options.AlwaysUseEncoding),
+                        DefaultEncodingIfNotDetected = Utils.GetEncodingByName(_options.DefaultEncodingIfNotDetected),
+                        UseEscapeChars = _options.UseEscapeChars,
+                        IsSilent = _options.Silent,
+                        IsKeepModifiedDate = _options.IsKeepModifiedDate
+                    };
 
-					replacer.IncludeSubDirectories = _options.IncludeSubDirectories;
-
-					replacer.FileMask = _options.FileMask;
-					replacer.ExcludeFileMask = _options.ExcludeFileMask;
-				    replacer.ExcludeDir = _options.ExcludeDir;
-
-                    replacer.FindText = CommandLineUtils.DecodeText(_options.FindText, false, hasRegEx, _options.UseEscapeChars);
-					replacer.IsCaseSensitive = _options.IsCaseSensitive;
-					replacer.FindTextHasRegEx = _options.IsFindTextHasRegEx;
-					replacer.SkipBinaryFileDetection = _options.SkipBinaryFileDetection;
-					replacer.IncludeFilesWithoutMatches = _options.IncludeFilesWithoutMatches;
-
-					replacer.ReplaceText = CommandLineUtils.DecodeText(_options.ReplaceText, true, _options.IsFindTextHasRegEx, _options.UseEscapeChars);
-
-					replacer.AlwaysUseEncoding = Utils.GetEncodingByName(_options.AlwaysUseEncoding);
-					replacer.DefaultEncodingIfNotDetected = Utils.GetEncodingByName(_options.DefaultEncodingIfNotDetected);
-					replacer.UseEscapeChars = _options.UseEscapeChars;
-
-					replacer.IsSilent = _options.Silent;
-
-					replacer.FileProcessed += OnReplacerFileProcessed;
-				    replacer.IsKeepModifiedDate = _options.IsKeepModifiedDate;
+                    replacer.FileProcessed += OnReplacerFileProcessed;
 
                     var replaceResult = replacer.Replace();
 
@@ -254,14 +264,14 @@ namespace FindAndReplace.App
 				}
 			}
 
-			if (!String.IsNullOrEmpty(_options.LogFile))
+			if (!string.IsNullOrEmpty(_options.LogFile))
 			{
 				Console.Out.Close();
 			}
 
 #if (DEBUG)
 				Console.ReadLine();
-			#endif
+#endif
 
 			return (int) dosErrorLevel;
 		}
@@ -302,7 +312,7 @@ namespace FindAndReplace.App
 		{
 			PrintNameValuePair("File", item.FileRelativePath);
 
-			if (_options.ShowEncoding && item.FileEncoding != null)
+			if (_options is { ShowEncoding: true } && item.FileEncoding != null)
 				PrintNameValuePair("Encoding", item.FileEncoding.WebName);
 		}
 
@@ -323,7 +333,7 @@ namespace FindAndReplace.App
 
 		private static void PrintNameValuePair(string name, string value)
 		{
-			string label = name + ":";
+			var label = name + ":";
 			label = label.PadRight(10);
 			Console.WriteLine(label + value);
 		}
@@ -353,7 +363,7 @@ namespace FindAndReplace.App
 				Console.WriteLine("- Replaced: " + stats.Matches.Replaced);
 
 			Console.WriteLine("");
-			double secs = Math.Round(stats.Time.Passed.TotalSeconds, 3);
+			var secs = Math.Round(stats.Time.Passed.TotalSeconds, 3);
 			Console.WriteLine("Duration: " + secs.ToString() + " secs");
 
 			Console.WriteLine("====================================");
@@ -361,3 +371,6 @@ namespace FindAndReplace.App
 
 	}
 }
+
+
+

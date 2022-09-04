@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace FindAndReplace
 {
-
+	/*
 	public class FinderEventArgs : EventArgs
 	{
 		public Finder.FindResultItem ResultItem { get; set; }
@@ -240,5 +240,5 @@ namespace FindAndReplace
 		}
 
 		
-	}
+	}*/
 }

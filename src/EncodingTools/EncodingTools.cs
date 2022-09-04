@@ -26,10 +26,16 @@ namespace href.Utils
 		/// </summary>
 		static EncodingTools()
 		{
+			/*
+			 * Without this registration in .NET Core, the following exception must be expected:
+			 * "No data is available for encoding 1252. For information on defining a custom encoding,
+			 * see the documentation for the Encoding.RegisterProvider method."
+			 */
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-			List<int> streamEcodings = new List<int>();
-			List<int> allEncodings = new List<int>();
-			List<int> mimeEcodings = new List<int>();
+			var streamEcodings = new List<int>();
+			var allEncodings = new List<int>();
+			var mimeEcodings = new List<int>();
 
 			// asscii - most simple so put it in first place...
 			streamEcodings.Add(Encoding.ASCII.CodePage);
@@ -57,11 +63,11 @@ namespace href.Utils
 
 			// always allow unicode flavours for streams (they all have a preamble)
 			streamEcodings.Add(Encoding.Unicode.CodePage);
-			foreach (EncodingInfo enc in Encoding.GetEncodings())
+			foreach (var enc in Encoding.GetEncodings())
 			{
 				if (!streamEcodings.Contains(enc.CodePage))
 				{
-					Encoding encoding = Encoding.GetEncoding(enc.CodePage);
+					var encoding = Encoding.GetEncoding(enc.CodePage);
 					if (encoding.GetPreamble().Length > 0)
 						streamEcodings.Add(enc.CodePage);
 				}
@@ -73,7 +79,7 @@ namespace href.Utils
 
 
 			// all singlebyte encodings
-			foreach (EncodingInfo enc in Encoding.GetEncodings())
+			foreach (var enc in Encoding.GetEncodings())
 			{
 
 
@@ -91,7 +97,7 @@ namespace href.Utils
 			}
 
 			// add the rest (multibyte)
-			foreach (EncodingInfo enc in Encoding.GetEncodings())
+			foreach (var enc in Encoding.GetEncodings())
 			{
 				if (!enc.GetEncoding().IsSingleByte)
 				{
@@ -125,7 +131,7 @@ namespace href.Utils
 			// assume empty string to be ascii
 			if ((data == null) || (data.Length == 0))
 				return true;
-			foreach (char c in data)
+			foreach (var c in data)
 			{
 				if ((int) c > 127)
 				{
@@ -164,13 +170,13 @@ namespace href.Utils
 		/// <returns>the suggested encoding</returns>
 		public static Encoding GetMostEfficientEncoding(string input, int[] preferedEncodings)
 		{
-			Encoding enc = DetectOutgoingEncoding(input, preferedEncodings, true);
+			var enc = DetectOutgoingEncoding(input, preferedEncodings, true);
 			// unicode.. hmmm... check for smallest encoding
 			if (enc.CodePage == Encoding.Unicode.CodePage)
 			{
-				int byteCount = Encoding.UTF7.GetByteCount(input);
+				var byteCount = Encoding.UTF7.GetByteCount(input);
 				enc = Encoding.UTF7;
-				int bestByteCount = byteCount;
+				var bestByteCount = byteCount;
 
 				// utf8 smaller?
 				byteCount = Encoding.UTF8.GetByteCount(input);
@@ -225,7 +231,7 @@ namespace href.Utils
 			if (input.Length == 0)
 				return Encoding.ASCII;
 
-			Encoding result = Encoding.ASCII;
+			var result = Encoding.ASCII;
 
 			// get the IMultiLanguage3 interface
 			MultiLanguage.IMultiLanguage3 multilang3 = new MultiLanguage.CMultiLanguageClass();
@@ -233,17 +239,17 @@ namespace href.Utils
 				throw new System.Runtime.InteropServices.COMException("Failed to get IMultilang3");
 			try
 			{
-				int[] resultCodePages =
+				var resultCodePages =
 					new int[preferedEncodings != null ? preferedEncodings.Length : Encoding.GetEncodings().Length];
-				uint detectedCodepages = (uint) resultCodePages.Length;
-				ushort specialChar = (ushort) '?';
+				var detectedCodepages = (uint) resultCodePages.Length;
+				var specialChar = (ushort) '?';
 
 
 				// get unmanaged arrays
-				IntPtr pPrefEncs = preferedEncodings == null
+				var pPrefEncs = preferedEncodings == null
 					                   ? IntPtr.Zero
 					                   : Marshal.AllocCoTaskMem(sizeof (uint)*preferedEncodings.Length);
-				IntPtr pDetectedEncs = Marshal.AllocCoTaskMem(sizeof (uint)*resultCodePages.Length);
+				var pDetectedEncs = Marshal.AllocCoTaskMem(sizeof (uint)*resultCodePages.Length);
 
 				try
 				{
@@ -252,7 +258,7 @@ namespace href.Utils
 
 					Marshal.Copy(resultCodePages, 0, pDetectedEncs, resultCodePages.Length);
 
-					MultiLanguage.MLCPF options = MultiLanguage.MLCPF.MLDETECTF_VALID_NLS;
+					var options = MultiLanguage.MLCPF.MLDETECTF_VALID_NLS;
 					if (preserveOrder)
 						options |= MultiLanguage.MLCPF.MLDETECTF_PRESERVE_ORDER;
 
@@ -269,7 +275,7 @@ namespace href.Utils
 					// get result
 					if (detectedCodepages > 0)
 					{
-						int[] theResult = new int[detectedCodepages];
+						var theResult = new int[detectedCodepages];
 						Marshal.Copy(pDetectedEncs, theResult, 0, theResult.Length);
 						result = Encoding.GetEncoding(theResult[0]);
 					}
@@ -299,7 +305,7 @@ namespace href.Utils
 			if (input.Length == 0)
 				return new Encoding[] {Encoding.ASCII};
 
-			List<Encoding> result = new List<Encoding>();
+			var result = new List<Encoding>();
 
 			// get the IMultiLanguage3 interface
 			MultiLanguage.IMultiLanguage3 multilang3 = new MultiLanguage.CMultiLanguageClass();
@@ -308,14 +314,14 @@ namespace href.Utils
 				throw new System.Runtime.InteropServices.COMException("Failed to get IMultilang3");
 			try
 			{
-				int[] resultCodePages = new int[preferedEncodings.Length];
-				uint detectedCodepages = (uint) resultCodePages.Length;
-				ushort specialChar = (ushort) '?';
+				var resultCodePages = new int[preferedEncodings.Length];
+				var detectedCodepages = (uint) resultCodePages.Length;
+				var specialChar = (ushort) '?';
 
 
 				// get unmanaged arrays
-				IntPtr pPrefEncs = Marshal.AllocCoTaskMem(sizeof (uint)*preferedEncodings.Length);
-				IntPtr pDetectedEncs = preferedEncodings == null
+				var pPrefEncs = Marshal.AllocCoTaskMem(sizeof (uint)*preferedEncodings.Length);
+				var pDetectedEncs = preferedEncodings == null
 					                       ? IntPtr.Zero
 					                       : Marshal.AllocCoTaskMem(sizeof (uint)*resultCodePages.Length);
 
@@ -326,8 +332,8 @@ namespace href.Utils
 
 					Marshal.Copy(resultCodePages, 0, pDetectedEncs, resultCodePages.Length);
 
-					MultiLanguage.MLCPF options = MultiLanguage.MLCPF.MLDETECTF_VALID_NLS |
-					                              MultiLanguage.MLCPF.MLDETECTF_PREFERRED_ONLY;
+					var options = MultiLanguage.MLCPF.MLDETECTF_VALID_NLS |
+                                  MultiLanguage.MLCPF.MLDETECTF_PREFERRED_ONLY;
 					if (preserveOrder)
 						options |= MultiLanguage.MLCPF.MLDETECTF_PRESERVE_ORDER;
 
@@ -344,12 +350,12 @@ namespace href.Utils
 					// get result
 					if (detectedCodepages > 0)
 					{
-						int[] theResult = new int[detectedCodepages];
+						var theResult = new int[detectedCodepages];
 						Marshal.Copy(pDetectedEncs, theResult, 0, theResult.Length);
 
 
 						// get the encodings for the codepages
-						for (int i = 0; i < detectedCodepages; i++)
+						for (var i = 0; i < detectedCodepages; i++)
 							result.Add(Encoding.GetEncoding(theResult[i]));
 
 					}
@@ -380,7 +386,7 @@ namespace href.Utils
 		{
 			try
 			{
-				Encoding[] detected = DetectInputCodepages(input, 1);
+				var detected = DetectInputCodepages(input, 1);
 				if (detected.Length > 0)
 					return detected[0];
 				return Encoding.Default;
@@ -401,7 +407,7 @@ namespace href.Utils
 		public static Encoding[] DetectInputCodepages(byte[] input, int maxEncodings)
 		{
 
-			StopWatch.Start("DetectInputCodepages_" + Thread.CurrentThread.ManagedThreadId);
+			StopWatch.Start("DetectInputCodepages_" + Environment.CurrentManagedThreadId);
 
 			if (maxEncodings < 1)
 				throw new ArgumentOutOfRangeException("at least one encoding must be returend", "maxEncodings");
@@ -416,12 +422,12 @@ namespace href.Utils
 			// expand the string to be at least 256 bytes
 			if (input.Length < 256)
 			{
-				byte[] newInput = new byte[256];
-				int steps = 256/input.Length;
-				for (int i = 0; i < steps; i++)
+				var newInput = new byte[256];
+				var steps = 256/input.Length;
+				for (var i = 0; i < steps; i++)
 					Array.Copy(input, 0, newInput, input.Length*i, input.Length);
 
-				int rest = 256%input.Length;
+				var rest = 256%input.Length;
 				if (rest > 0)
 					Array.Copy(input, 0, newInput, steps*input.Length, rest);
 				input = newInput;
@@ -429,7 +435,7 @@ namespace href.Utils
 
 
 
-			List<Encoding> result = new List<Encoding>();
+			var result = new List<Encoding>();
 
 			// get the IMultiLanguage" interface
 			MultiLanguage.IMultiLanguage2 multilang2 = new MultiLanguage.CMultiLanguageClass();
@@ -438,27 +444,27 @@ namespace href.Utils
 				throw new System.Runtime.InteropServices.COMException("Failed to get IMultilang2");
 			try
 			{
-				MultiLanguage.DetectEncodingInfo[] detectedEncdings = new MultiLanguage.DetectEncodingInfo[maxEncodings];
+				var detectedEncdings = new MultiLanguage.DetectEncodingInfo[maxEncodings];
 
-				int scores = detectedEncdings.Length;
-				int srcLen = input.Length;
+				var scores = detectedEncdings.Length;
+				var srcLen = input.Length;
 
 				// setup options (none)   
-				MultiLanguage.MLDETECTCP options = MultiLanguage.MLDETECTCP.MLDETECTCP_NONE;
+				var options = MultiLanguage.MLDETECTCP.MLDETECTCP_NONE;
 
 
-				StopWatch.Start("multilang2.DetectInputCodepage_" + Thread.CurrentThread.ManagedThreadId);
+				StopWatch.Start("multilang2.DetectInputCodepage_" + Environment.CurrentManagedThreadId);
 
 				// finally... call to DetectInputCodepage
 				multilang2.DetectInputCodepage(options, 0,
 				                               ref input[0], ref srcLen, ref detectedEncdings[0], ref scores);
 
-				StopWatch.Stop("multilang2.DetectInputCodepage_" + Thread.CurrentThread.ManagedThreadId);
+				StopWatch.Stop("multilang2.DetectInputCodepage_" + Environment.CurrentManagedThreadId);
 
 				// get result
 				if (scores > 0)
 				{
-					for (int i = 0; i < scores; i++)
+					for (var i = 0; i < scores; i++)
 					{
 						// add the result
 						result.Add(Encoding.GetEncoding((int) detectedEncdings[i].nCodePage));
@@ -470,7 +476,7 @@ namespace href.Utils
 				Marshal.FinalReleaseComObject(multilang2);
 			}
 
-			StopWatch.Stop("DetectInputCodepages_" + Thread.CurrentThread.ManagedThreadId);
+			StopWatch.Stop("DetectInputCodepages_" + Environment.CurrentManagedThreadId);
 
 			// nothing found
 			return result.ToArray();
@@ -577,8 +583,8 @@ namespace href.Utils
 
 			using (Stream fs = File.Open(path, FileMode.Open))
 			{
-				byte[] rawData = new byte[fs.Length];
-				Encoding enc = DetectInputCodepage(rawData);
+				var rawData = new byte[fs.Length];
+				var enc = DetectInputCodepage(rawData);
 				return enc.GetString(rawData);
 			}
 		}
@@ -611,13 +617,13 @@ namespace href.Utils
 				throw new ArgumentException("the stream must support seek operations", "stream");
 
 			// assume default encoding at first place
-			Encoding detectedEncoding = Encoding.Default;
+			var detectedEncoding = Encoding.Default;
 
 			// seek to stream start
 			stream.Seek(0, SeekOrigin.Begin);
 
 			// buffer for preamble and up to 512b sample text for dection
-			byte[] buf = new byte[System.Math.Min(stream.Length, 512)];
+			var buf = new byte[System.Math.Min(stream.Length, 512)];
 
 			stream.Read(buf, 0, buf.Length);
 			detectedEncoding = DetectInputCodepage(buf);

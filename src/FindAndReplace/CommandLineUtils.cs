@@ -41,11 +41,11 @@ namespace FindAndReplace
 		{
 			var regexPattern = @"\\+""";
 
-			string result = Regex.Replace(original, regexPattern, 
+			var result = Regex.Replace(original, regexPattern, 
 				delegate(Match match)
 				{
-					string matchText = match.ToString();
-					string justSlashes = matchText.Remove(matchText.Length - 1);
+					var matchText = match.ToString();
+					var justSlashes = matchText.Remove(matchText.Length - 1);
 					return justSlashes + justSlashes + "\"";  //double up the slashes
 				});
 				
@@ -62,10 +62,10 @@ namespace FindAndReplace
 		{
 			var regexPattern = @"\\+$";
 
-			string result = Regex.Replace(original, regexPattern,
+			var result = Regex.Replace(original, regexPattern,
 				delegate(Match match)
 				{
-					string matchText = match.ToString();
+					var matchText = match.ToString();
 					return matchText + matchText;  //double up the slashes
 				});
 
@@ -74,7 +74,7 @@ namespace FindAndReplace
 
 		public static string DecodeText(string original, bool isReplace, bool hasRegEx = false, bool useEscapeChars = false)
 		{
-			string decoded = original;
+			var decoded = original;
 
 			//See case https://findandreplace.codeplex.com/workitem/17
 			if (!hasRegEx && !useEscapeChars)
@@ -156,7 +156,7 @@ namespace FindAndReplace
 
 			var matches = regex.Matches(text);
 
-			for (int i = matches.Count - 1; i>= 0; i--)
+			for (var i = matches.Count - 1; i>= 0; i--)
 			{
 				var match = matches[i];
 				

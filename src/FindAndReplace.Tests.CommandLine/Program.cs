@@ -17,7 +17,7 @@ namespace FindAndReplace.Tests.CommandLine
 			var options = new CommandLineOptions();
 
 			string result;
-			if (Parser.Default.ParseArguments(args, options))
+			if (Parser.Default.ParseArguments(args, new []{typeof(CommandLineOptions)}).Errors.Any())
 			{
 				if (options.SkipDecoding)
 					result = options.TestValue;
@@ -27,10 +27,10 @@ namespace FindAndReplace.Tests.CommandLine
 			else
 			{
 				result = "Errors in ParseArguments: " + Environment.NewLine;
-				if (options.LastParserState.Errors.Count > 0)
+				if (options.ParserResult.Errors.Count() > 0)
 				{
-					foreach (var error in options.LastParserState.Errors)
-						result += error.BadOption.ShortName + ": " + error.ToString() + Environment.NewLine;
+					foreach (var error in options.ParserResult.Errors)
+						result += error.Tag + error.ToString();
 				}	
 			}
 

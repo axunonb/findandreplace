@@ -62,11 +62,11 @@ namespace FindAndReplace
 
                 StopWatch.Stop("FileGetter.Run Directory.EnumerateFiles");
                 
-                foreach (string filePath in files)
+                foreach (var filePath in files)
                 {
 
                     StopWatch.Start("FileGetter.Run IsMatchWithExcludeFileMasks");
-                    bool isMatchWithExcludeFileMasks = IsMatchWithExcludeFileMasks(filePath);
+                    var isMatchWithExcludeFileMasks = IsMatchWithExcludeFileMasks(filePath);
                     StopWatch.Stop("FileGetter.Run IsMatchWithExcludeFileMasks");
            
                     if (!isMatchWithExcludeFileMasks)
@@ -152,7 +152,7 @@ namespace FindAndReplace
                 }
                 else
                 {
-                    bool isDequeued = false;
+                    var isDequeued = false;
 
                     //StopWatch.Start("FileGetter.RunSync FileQueue.TryDequeue");
                    
@@ -213,7 +213,7 @@ namespace FindAndReplace
                 ExcludeFileMasksRegEx = ExcludeFileMasks.Select(Utils.WildcardToRegex).ToList();
 
 
-            foreach (string pattern in ExcludeFileMasksRegEx)
+            foreach (var pattern in ExcludeFileMasksRegEx)
             {
                 if (Regex.IsMatch(filePath, pattern))
                     return true;

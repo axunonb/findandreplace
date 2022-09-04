@@ -62,15 +62,15 @@ namespace FindAndReplace
 
 		public void UpdateTime(DateTime startTime, DateTime startTimeProcessingFiles)
 		{
-			DateTime now = DateTime.Now;
+			var now = DateTime.Now;
 			Time.Passed = now.Subtract(startTime);
 			
 			//Use startTimeProcessingFiles to figure out remaining time
-			TimeSpan passedProcessingFiles = now.Subtract(startTimeProcessingFiles);
+			var passedProcessingFiles = now.Subtract(startTimeProcessingFiles);
 
-			double passedSeconds = passedProcessingFiles.TotalSeconds;
+			var passedSeconds = passedProcessingFiles.TotalSeconds;
 
-			int remainingFiles = Files.Total - Files.Processed;
+			var remainingFiles = Files.Total - Files.Processed;
 			var remainingSeconds = (passedSeconds / Files.Processed) * remainingFiles;
 
 			Time.Remaining = TimeSpan.FromSeconds(remainingSeconds);

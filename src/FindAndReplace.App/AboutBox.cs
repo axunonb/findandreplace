@@ -15,11 +15,11 @@ namespace FindAndReplace.App
 		public AboutBox()
 		{
 			InitializeComponent();
-			this.Text = String.Format("About {0}", AssemblyTitle);
+			this.Text = string.Format("About {0}", AssemblyTitle);
 			this.lblProductName.Text = AssemblyProduct;
 			this.lnkProduct.Text = "http://findandreplace.io/";
 		
-			this.lblVersion.Text = String.Format("Version {0}", AssemblyVersion);
+			this.lblVersion.Text = string.Format("Version {0}", AssemblyVersion);
 			this.lblCopyright.Text = AssemblyCopyright;
 			this.lnkCompany.Text = AssemblyCompany;
 		    this.uiSupportedBy.Text = "ZZZ Projects";
@@ -31,16 +31,16 @@ namespace FindAndReplace.App
 		{
 			get
 			{
-				object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
 				if (attributes.Length > 0)
 				{
-					AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
+					var titleAttribute = (AssemblyTitleAttribute)attributes[0];
 					if (titleAttribute.Title != "")
 					{
 						return titleAttribute.Title;
 					}
 				}
-				return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+				return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
 			}
 		}
 
@@ -48,7 +48,7 @@ namespace FindAndReplace.App
 		{
 			get
 			{
-				return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+				return Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace FindAndReplace.App
 		{
 			get
 			{
-				object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
+				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
 				if (attributes.Length == 0)
 				{
 					return "";
@@ -69,7 +69,7 @@ namespace FindAndReplace.App
 		{
 			get
 			{
-				object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
 				if (attributes.Length == 0)
 				{
 					return "";
@@ -82,7 +82,7 @@ namespace FindAndReplace.App
 		{
 			get
 			{
-				object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
 				if (attributes.Length == 0)
 				{
 					return "";
@@ -95,7 +95,7 @@ namespace FindAndReplace.App
 		{
 			get
 			{
-				object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
 				if (attributes.Length == 0)
 				{
 					return "";
@@ -107,17 +107,17 @@ namespace FindAndReplace.App
 
 		private void lnkProduct_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Process.Start("http://findandreplace.io/");
+			Tools.LaunchBrowser("http://findandreplace.io/");
 		}
 
 		private void lnkCompany_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Process.Start("http://www.entechsolutions.com");
+            Tools.LaunchBrowser("http://www.entechsolutions.com");
 		}
 
         private void uiSupportedBy_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://www.zzzprojects.com/");
+            Tools.LaunchBrowser("http://www.zzzprojects.com/");
         }
     }
 }

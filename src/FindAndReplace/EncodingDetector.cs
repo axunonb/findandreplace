@@ -18,7 +18,7 @@ namespace FindAndReplace
 			MLang = 4
 		}
 
-		public static Encoding Detect(byte[] bytes, EncodingDetector.Options opts = Options.KlerkSoftBom | Options.MLang, Encoding defaultEncoding = null)
+		public static Encoding Detect(byte[] bytes, Options opts = Options.KlerkSoftBom | Options.MLang, Encoding defaultEncoding = null)
 		{
 			Encoding encoding = null;
 
@@ -61,7 +61,7 @@ namespace FindAndReplace
 		{
 			Encoding encoding = null;
 			if (bytes.Count() >= 4)
-				 encoding = KlerksSoftEncodingDetector.DetectBOMBytes(bytes);
+				 encoding = TextFileEncodingDetector.DetectBOMBytes(bytes);
 
 			return encoding;
 		}
@@ -69,28 +69,33 @@ namespace FindAndReplace
 
 		private static Encoding DetectEncodingUsingKlerksSoftHeuristics(byte[] bytes)
 		{
-			Encoding encoding = KlerksSoftEncodingDetector.DetectUnicodeInByteSampleByHeuristics(bytes);
+			var encoding = TextFileEncodingDetector.DetectUnicodeInByteSampleByHeuristics(bytes);
 
 			return encoding;
 		}
 
-		private static Encoding DetectEncodingUsingMLang(Byte[] bytes)
+		private static Encoding DetectEncodingUsingMLang(byte[] bytes)
 		{
 			try
 			{
-				Encoding[] detected = EncodingTools.DetectInputCodepages(bytes, 1);
+				var detected = EncodingTools.DetectInputCodepages(bytes, 1);
 				if (detected.Length > 0)
 				{
 					return detected[0];
 				}
 			}
-			catch //(COMException ex)
+			catch
 			{
-				// return default codepage on error
+                /*
+                 * If the following NotSupportedException occurs:
+                 * "No data is available for encoding 1252. For information on defining a custom encoding,
+                 * see the documentation for the Encoding.RegisterProvider method."
+                 * Register it like so: Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)
+                 * The CTOR of EncodingTools contains this registration currently.
+                 */
 			}
 
 			return null;
 		}
-
 	}
 }
